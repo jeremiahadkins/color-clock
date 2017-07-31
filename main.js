@@ -21,13 +21,15 @@ function clock () {
 
   var timeToColor = function(a,b,c){
     var concatTimes = a.toString() + b.toString() + c.toString();
-    console.log('concat times', concatTimes); 
+    // console.log('concat times', concatTimes); 
     return concatTimes;
   }
 
   $('body').css("background-color", timeToColor(timeSeconds, timeMinutes, timeHours));
 
-  console.log(typeof(timeToColor(timeSeconds, timeMinutes, timeHours)));
+  $(".current-time").hover(function(e){
+    $(this).text("#" + timeToColor(timeSeconds, timeMinutes, timeHours));
+  });
 }
 
 // function call on timer
