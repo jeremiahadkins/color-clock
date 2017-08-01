@@ -1,36 +1,54 @@
-function clock () {
-  // defining vars
-  var time = new Date();
-  var timeHours = time.getHours() > 12 ? time.getHours() - 12 : time.getHours();
-  var timeMinutes = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
-  var timeSeconds = time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
-  var timeSplit = timeHours + ":" + timeMinutes + ":" + timeSeconds;
+(function () {
 
-  // setting time
-  $(".current-time").html(timeSplit);
-  
-  // defining percentage
-  var roundedTimeSeconds = parseFloat((timeSeconds/60).toFixed(2));
-  var roundedTimeSecondsToInt= (roundedTimeSeconds * 100).toString();
+  var intervalId = 0;
+  var displayClock = document.querySelector(".current-time");
+  var mouseIsHovering= false;
 
-  // console log percentage
-  console.log(roundedTimeSecondsToInt);
-
-  // setting width = 'initial'
-  $(".time-bar").css("width", roundedTimeSecondsToInt + "%");
-
-  var timeToColor = function(a,b,c){
-    var concatTimes = a.toString() + b.toString() + c.toString();
-    // console.log('concat times', concatTimes); 
-    return concatTimes;
+  function timeToHex (h, m, s) {
+    var timeHex = "#" + s.toString() + m.toString() + h.toString();
+    return timeHex;
   }
 
-  $('body').css("background-color", timeToColor(timeSeconds, timeMinutes, timeHours));
+  function hoverHex(display) {
+    displayClock.textContent = display;
+  }
 
-  $(".current-time").hover(function(e){
-    $(this).text("#" + timeToColor(timeSeconds, timeMinutes, timeHours));
-  });
-}
+  function printTime () {
+    var currentTime = new Date();
+    var hours = currentTime.getHours() > 12 ? currentTime.getHours() - 12 : currentTime.getHours();
+    var minutes = currentTime.getMinutes() < 10 ? "0" + currentTime.getMinutes() : currentTime.getMinutes();
+    var seconds = currentTime.getSeconds() < 10 ? "0" + currentTime.getSeconds() : currentTime.getSeconds();
 
-// function call on timer
-window.setInterval(clock, 1000);
+    var hexedTime = timeToHex(hours, minutes, seconds);
+
+    if (mouseIsHovering) {
+      displayClock.textContent = hexedTime;
+    } else {
+      displayClock.textContent = hours + ":" + minutes + ":" + seconds;
+    }
+
+    $('body').css("background-color", hexedTime);
+
+    var percentage = parseFloat((seconds/60).toFixed(2));
+    var percentageToInt = (percentage * 100).toString();
+
+    $(".time-bar").css("width", percentageToInt + "%");
+  }
+
+  
+  function hoverHex () {
+    mouseIsHovering = true;
+  }
+
+  function noHoverHex () {
+    mouseIsHovering = false;
+  }
+
+
+  displayClock.addEventListener('mouseenter', hoverHex);
+  displayClock.addEventListener('mouseout', noHoverHex);
+
+  intervalId = window.setInterval(printTime, 100);
+
+  setInterval(printTime, 1000);
+})();
